@@ -1,0 +1,66 @@
+.login-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  text-align: center;
+}
+
+.login-header {
+  margin-bottom: 3rem;
+}
+
+.heart-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  animation: heartbeat 1.5s infinite ease-in-out;
+}
+
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.login-header h1 {
+  font-size: 2.5rem;
+  color: var(--accent);
+  line-height: 1;
+}
+
+.login-header h2 {
+  font-size: 1.5rem;
+  color: var(--primary);
+  font-weight: 400;
+}
+
+.login-card {
+  width: 100%;
+}
+
+.google-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: white;
+  color: #757575;
+  border: 1px solid #ddd;
+  margin-top: 1.5rem;
+}
+
+.google-btn:hover {
+  background: #f1f1f1;
+}
+
+.demo-btn {
+  background: #fce4ec;
+  color: var(--accent);
+  margin-top: 1rem;
+  border: 1px solid var(--accent);
+}
+
+.demo-btn:hover {
+  background: #f8bbd0;
+}
+
