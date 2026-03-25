@@ -3,13 +3,15 @@ import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 import './Admin.css';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 const Admin = () => {
   const [photos, setPhotos] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const fetchPhotos = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/admin/photos', { withCredentials: true });
+      const res = await axios.get(`${API_URL}/api/admin/photos`, { withCredentials: true });
       setPhotos(res.data);
     } catch (err) {
       console.error('Error fetching admin photos');
@@ -24,7 +26,7 @@ const Admin = () => {
 
   const updateStatus = async (id, status) => {
     try {
-      await axios.patch(`http://localhost:5000/api/admin/photos/${id}`, { status }, { withCredentials: true });
+      await axios.patch(`${API_URL}/api/admin/photos/${id}`, { status }, { withCredentials: true });
       fetchPhotos();
     } catch (err) {
       alert('Error updating status');

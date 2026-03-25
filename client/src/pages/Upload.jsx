@@ -4,6 +4,8 @@ import { AuthContext } from '../context/AuthContext';
 import { Camera, Upload as UploadIcon } from 'lucide-react';
 import './Upload.css';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 const Upload = () => {
   const { isDemo } = useContext(AuthContext);
   const [category, setCategory] = useState('Entrada');
@@ -33,7 +35,7 @@ const Upload = () => {
     formData.append('category', category);
 
     try {
-      await axios.post('http://localhost:5000/api/upload', formData, {
+      await axios.post(`${API_URL}/api/upload`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
         withCredentials: true
       });

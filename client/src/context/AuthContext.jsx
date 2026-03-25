@@ -1,12 +1,13 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-
   const [isDemo, setIsDemo] = useState(false);
 
   const mockLogin = () => {
@@ -16,7 +17,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (userData) => {
     try {
-      await axios.post('http://localhost:5000/auth/register', userData);
+      await axios.post(`${API_URL}/auth/register`, userData);
       return { success: true };
     } catch (err) {
       return { success: false, error: err.response?.data?.error || 'Error al registrar' };
@@ -25,7 +26,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     try {
-      const res = await axios.post('http://localhost:5000/auth/login', { username, password }, { withCredentials: true });
+      const res = await axios.post(`${API_URL}/auth/login`, { username, password }, { withCredentials: true });
       if (res.data.success) {
         setUser(res.data.user);
         return { success: true };
@@ -38,10 +39,8 @@ export const AuthProvider = ({ children }) => {
   const checkAuth = async () => {
     if (isDemo) return;
     try {
-      const res = await axios.get('http://localhost:5000/auth/user', { withCredentials: true });
-      if (res.data.user) {
-        setUser(res.data.user);
-      }
+      const res = await axios.get(`${API_URL}/auth/user`, { withCredentials: true });
+      if (res.data.user) setUser(res.data.user);
     } catch (err) {
       setUser(null);
     } finally {
@@ -54,7 +53,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const loginWithGoogle = () => {
-    window.location.href = 'http://localhost:5000/auth/google';
+    window.location.href = `${API_URL}/auth/google`;
   };
 
   const logout = async () => {
@@ -64,7 +63,7 @@ export const AuthProvider = ({ children }) => {
       return;
     }
     try {
-      await axios.post('http://localhost:5000/auth/logout', {}, { withCredentials: true });
+      await axios.post(`${API_URL}/auth/logout`, {}, { withCredentials: true });
       setUser(null);
     } catch (err) {
       console.error('Logout failed');

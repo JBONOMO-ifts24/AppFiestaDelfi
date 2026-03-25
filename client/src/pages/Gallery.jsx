@@ -3,6 +3,8 @@ import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 import './Gallery.css';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 const Gallery = () => {
   const { isDemo, user } = useContext(AuthContext);
   const [filter, setFilter] = useState('Todos');
@@ -16,7 +18,7 @@ const Gallery = () => {
 
   const fetchPhotos = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/photos');
+      const res = await axios.get(`${API_URL}/api/photos`);
       setPhotos(res.data);
     } catch (err) {
       console.error('Error fetching photos');
@@ -40,7 +42,7 @@ const Gallery = () => {
 
   const fetchComments = async (photoId) => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/photos/${photoId}/comments`);
+      const res = await axios.get(`${API_URL}/api/photos/${photoId}/comments`);
       setComments(res.data);
     } catch (err) {
       console.error('Error fetching comments');
@@ -49,7 +51,7 @@ const Gallery = () => {
 
   const handleRate = async (photoId, score) => {
     try {
-      await axios.post(`http://localhost:5000/api/photos/${photoId}/rate`, { score }, { withCredentials: true });
+      await axios.post(`${API_URL}/api/photos/${photoId}/rate`, { score }, { withCredentials: true });
       fetchPhotos(); // Refresh to show new average
     } catch (err) {
       alert('Debes iniciar sesión para calificar!');
@@ -60,7 +62,7 @@ const Gallery = () => {
     e.preventDefault();
     if (!newComment.trim()) return;
     try {
-      await axios.post(`http://localhost:5000/api/photos/${selectedPhoto.id}/comments`, { content: newComment }, { withCredentials: true });
+      await axios.post(`${API_URL}/api/photos/${selectedPhoto.id}/comments`, { content: newComment }, { withCredentials: true });
       setNewComment('');
       fetchComments(selectedPhoto.id);
       fetchPhotos(); // Update comment count in grid
@@ -72,7 +74,7 @@ const Gallery = () => {
   const handleDeleteComment = async (commentId) => {
     if (!window.confirm('¿Borrar comentario?')) return;
     try {
-      await axios.delete(`http://localhost:5000/api/comments/${commentId}`, { withCredentials: true });
+      await axios.delete(`${API_URL}/api/comments/${commentId}`, { withCredentials: true });
       fetchComments(selectedPhoto.id);
       fetchPhotos();
     } catch (err) {
