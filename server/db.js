@@ -36,6 +36,16 @@ db.exec(`
     FOREIGN KEY (photo_id) REFERENCES photos(id),
     FOREIGN KEY (user_id) REFERENCES users(id)
   );
+
+  CREATE TABLE IF NOT EXISTS comments (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    photo_id INTEGER,
+    user_id INTEGER,
+    content TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (photo_id) REFERENCES photos(id),
+    FOREIGN KEY (user_id) REFERENCES users(id)
+  );
 `);
 
 console.log('Database initialized successfully.');

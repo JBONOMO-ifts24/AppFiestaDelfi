@@ -96,7 +96,8 @@ app.get('/api/photos', (req, res) => {
   const host = req.get('host');
   const photos = db.prepare(`
     SELECT p.*, u.name as uploader_name, 
-    (SELECT AVG(score) FROM ratings WHERE photo_id = p.id) as avg_score
+    (SELECT AVG(score) FROM ratings WHERE photo_id = p.id) as avg_score,
+    (SELECT COUNT(*) FROM comments WHERE photo_id = p.id) as comment_count
     FROM photos p 
     JOIN users u ON p.uploader_id = u.id
     WHERE p.status = 'approved'
@@ -109,6 +110,50 @@ app.get('/api/photos', (req, res) => {
   }));
   
   res.json(formattedPhotos);
+});
+
+// Comment Routes
+app.get('/api/photos/:id/comments', (req, res) => {
+  const comments = db.prepare(`
+    SELECT c.*, u.name as user_name 
+    FROM comments c
+    JOIN users u ON c.user_id = u.id
+    WHERE c.photo_id = ?
+    ORDER BY c.created_at ASC
+  `).all(req.params.id);
+  res.json(comments);
+});
+
+app.post('/api/photos/:id/comments', (req, res) => {
+  if (!req.user) return res.status(401).json({ error: 'Login required' });
+  const { content } = req.body;
+  const photoId = req.params.id;
+
+  try {
+    db.prepare('INSERT INTO comments (photo_id, user_id, content) VALUES (?, ?, ?)')
+      .run(photoId, req.user.id, content);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to add comment' });
+  }
+});
+
+app.delete('/api/comments/:id', (req, res) => {
+  if (!req.user) return res.status(401).json({ error: 'Login required' });
+  
+  const comment = db.prepare('SELECT * FROM comments WHERE id = ?').get(req.params.id);
+  if (!comment) return res.status(404).json({ error: 'Comment not found' });
+
+  if (comment.user_id !== req.user.id && req.user.role !== 'admin') {
+    return res.status(403).json({ error: 'Permission denied' });
+  }
+
+  try {
+    db.prepare('DELETE FROM comments WHERE id = ?').run(req.params.id);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to delete comment' });
+  }
 });
 
 app.post('/api/photos/:id/rate', (req, res) => {
