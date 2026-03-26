@@ -20,7 +20,7 @@ db.exec(`
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     drive_id TEXT UNIQUE,
     filename TEXT,
-    category TEXT, -- 'Entrada', 'Vals', 'Carioca'
+    category TEXT, -- '#Entrada', '#Vals', '#Carioca', '#Torta', '#Sorpresa', '#Amigos', '#Familia', '#Selfie'
     uploader_id INTEGER,
     upload_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     status TEXT DEFAULT 'pending', -- 'pending', 'approved', 'hidden'

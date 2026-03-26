@@ -13,8 +13,8 @@ const Gallery = () => {
   const [selectedPhoto, setSelectedPhoto] = useState(null);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
-  
-  const categories = ['Todos', 'Entrada', 'Vals', 'Carioca'];
+
+  const categories = ['Todos', '#Entrada', '#Vals', '#Carioca', '#Torta', '#Sorpresa', '#Amigos', '#Familia', '#Selfie'];
 
   const fetchPhotos = async () => {
     try {
@@ -28,15 +28,6 @@ const Gallery = () => {
   };
 
   useEffect(() => {
-    if (isDemo) {
-      setPhotos([
-        { id: 1, drive_id: 'mock1', category: 'Entrada', uploader_name: 'Delfi', avg_score: 5, comment_count: 2 },
-        { id: 2, drive_id: 'mock2', category: 'Vals', uploader_name: 'Pablo', avg_score: 4, comment_count: 0 },
-        { id: 3, drive_id: 'mock3', category: 'Carioca', uploader_name: 'Santi', avg_score: 4.5, comment_count: 5 },
-      ]);
-      setLoading(false);
-      return;
-    }
     fetchPhotos();
   }, []);
 
@@ -84,8 +75,7 @@ const Gallery = () => {
 
   const openPhoto = (photo) => {
     setSelectedPhoto(photo);
-    if (!isDemo) fetchComments(photo.id);
-    else setComments([{ id: 1, user_name: 'Invitado', content: '¡Qué buena foto!', created_at: new Date().toISOString() }]);
+    fetchComments(photo.id);
   };
 
   return (
@@ -94,8 +84,8 @@ const Gallery = () => {
         <h1>Momentos de Delfi</h1>
         <div className="filter-bar">
           {categories.map(cat => (
-            <button 
-              key={cat} 
+            <button
+              key={cat}
               className={`filter-btn ${filter === cat ? 'active' : ''}`}
               onClick={() => setFilter(cat)}
             >
@@ -104,17 +94,17 @@ const Gallery = () => {
           ))}
         </div>
       </header>
-      
+
       <div className="photo-grid">
-        {loading ? <p>Cargando momentos...</p> : 
+        {loading ? <p>Cargando momentos...</p> :
           photos.filter(p => filter === 'Todos' || p.category === filter).map(photo => (
             <div key={photo.id} className="photo-card" onClick={() => openPhoto(photo)}>
-              <img 
-                src={photo.url || (photo.drive_id && photo.drive_id.startsWith('mock') 
-                  ? `https://picsum.photos/seed/${photo.id}/400` 
-                  : 'https://via.placeholder.com/400?text=No+Image')} 
-                alt="Evento" 
-                loading="lazy" 
+              <img
+                src={photo.url || (photo.drive_id && photo.drive_id.startsWith('mock')
+                  ? `https://picsum.photos/seed/${photo.id}/400`
+                  : 'https://via.placeholder.com/400?text=No+Image')}
+                alt="Evento"
+                loading="lazy"
               />
               <div className="photo-info">
                 <span className="category-tag">{photo.category}</span>
@@ -135,15 +125,15 @@ const Gallery = () => {
             <button className="close-modal" onClick={() => setSelectedPhoto(null)}>×</button>
             <div className="modal-body">
               <img src={selectedPhoto.url || `https://picsum.photos/seed/${selectedPhoto.id}/800`} alt="Grande" />
-              
+
               <div className="modal-details">
                 <div className="rating-section">
                   <h3>¿Qué te parece esta foto?</h3>
                   <div className="rating-stars">
-                    {[1,2,3,4,5].map(s => (
-                      <span 
-                        key={s} 
-                        className="star-large" 
+                    {[1, 2, 3, 4, 5].map(s => (
+                      <span
+                        key={s}
+                        className="star-large"
                         onClick={() => handleRate(selectedPhoto.id, s)}
                       >
                         {s <= (selectedPhoto.avg_score || 0) ? '★' : '☆'}
@@ -156,7 +146,7 @@ const Gallery = () => {
                 <div className="comments-section">
                   <h3>Comentarios</h3>
                   <div className="comments-list">
-                    {comments.length === 0 ? <p className="no-comments">Nadie ha comentado aún. ¡Sé el primero!</p> : 
+                    {comments.length === 0 ? <p className="no-comments">Nadie ha comentado aún. ¡Sé el primero!</p> :
                       comments.map(c => (
                         <div key={c.id} className="comment-item">
                           <div className="comment-header">
@@ -170,12 +160,12 @@ const Gallery = () => {
                       ))
                     }
                   </div>
-                  
+
                   {user && (
                     <form className="comment-form" onSubmit={handleAddComment}>
-                      <input 
-                        type="text" 
-                        placeholder="Escribe un comentario..." 
+                      <input
+                        type="text"
+                        placeholder="Escribe un comentario..."
                         value={newComment}
                         onChange={e => setNewComment(e.target.value)}
                       />

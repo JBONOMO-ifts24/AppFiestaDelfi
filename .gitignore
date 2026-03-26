@@ -39,6 +39,8 @@ server/database.sqlite
 server/database.sqlite-journal
 server/uploads/*
 !server/uploads/.gitkeep
+server/database.db
+*.db
 
 # Optional: keep uploads folder but ignore content
 !server/uploads/

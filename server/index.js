@@ -13,6 +13,13 @@ const { register, login, verifyToken } = require('./localAuth');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const fs = require('fs');
+
+const uploadsDir = './uploads';
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
 
 // Middleware
 app.use(cors({
@@ -80,7 +87,7 @@ app.post('/api/upload', async (req, res) => {
 
   try {
     await photo.mv(uploadPath);
-    
+
     db.prepare('INSERT INTO photos (drive_id, filename, category, uploader_id, status) VALUES (?, ?, ?, ?, ?)')
       .run(fileName, photo.name, category, req.user.id, 'approved');
 
@@ -103,12 +110,12 @@ app.get('/api/photos', (req, res) => {
     WHERE p.status = 'approved'
     ORDER BY p.upload_date DESC
   `).all();
-  
+
   const formattedPhotos = photos.map(p => ({
     ...p,
     url: `${protocol}://${host}/uploads/${p.drive_id}`
   }));
-  
+
   res.json(formattedPhotos);
 });
 
@@ -140,7 +147,7 @@ app.post('/api/photos/:id/comments', (req, res) => {
 
 app.delete('/api/comments/:id', (req, res) => {
   if (!req.user) return res.status(401).json({ error: 'Login required' });
-  
+
   const comment = db.prepare('SELECT * FROM comments WHERE id = ?').get(req.params.id);
   if (!comment) return res.status(404).json({ error: 'Comment not found' });
 
@@ -223,9 +230,9 @@ app.get('/api/photos/view/:driveId', async (req, res) => {
   // we could use a service account or the uploader's token if we stored it long-term.
   // Alternatively, we can make the file public during upload and use the shortcut.
   // For simplicity here, we'll try to fetch using the drive instance.
-  
+
   const drive = google.drive({ version: 'v3', auth: process.env.GOOGLE_API_KEY || oauth2Client });
-  
+
   try {
     const response = await drive.files.get(
       { fileId: driveId, alt: 'media' },

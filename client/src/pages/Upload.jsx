@@ -22,13 +22,6 @@ const Upload = () => {
 
   const handleUpload = async () => {
     if (!file) return;
-    
-    if (isDemo) {
-      alert('¡Simulación de subida exitosa! (En modo demo no se guarda nada)');
-      setPreview(null);
-      setFile(null);
-      return;
-    }
 
     const formData = new FormData();
     formData.append('photo', file);
@@ -67,11 +60,16 @@ const Upload = () => {
         )}
 
         <div className="input-group">
-          <label>En qué momento fue?</label>
+          <label>HASHTAG</label>
           <select value={category} onChange={(e) => setCategory(e.target.value)}>
-            <option value="Entrada">Entrada</option>
-            <option value="Vals">Vals</option>
-            <option value="Carioca">Carioca</option>
+            <option value="#Entrada">Entrada</option>
+            <option value="#Vals">Vals</option>
+            <option value="#Carioca">Carioca</option>
+            <option value="#Torta">Torta</option>
+            <option value="#Sorpresa">Sorpresa</option>
+            <option value="#Amigos">Amigos</option>
+            <option value="#Familia">Familia</option>
+            <option value="#Selfie">Selfie</option>
           </select>
         </div>
 
