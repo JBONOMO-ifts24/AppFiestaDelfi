@@ -73,6 +73,17 @@ const Gallery = () => {
     }
   };
 
+  const handleDeletePhoto = async (photoId) => {
+    if (!window.confirm('¿Borrar esta foto? Esta acción borrara la foto de la galería.')) return;
+    try {
+      await axios.delete(`${API_URL}/api/photos/${photoId}`, { withCredentials: true });
+      setSelectedPhoto(null);
+      fetchPhotos();
+    } catch (err) {
+      alert('Error al borrar la foto');
+    }
+  };
+
   const openPhoto = (photo) => {
     setSelectedPhoto(photo);
     fetchComments(photo.id);
@@ -141,6 +152,15 @@ const Gallery = () => {
                     ))}
                     <span className="avg-label">({Number(selectedPhoto.avg_score || 0).toFixed(1)})</span>
                   </div>
+                  {user && (user.id === selectedPhoto.uploader_id || user.role === 'admin') && (
+                    <button 
+                      className="delete-photo-btn"
+                      onClick={() => handleDeletePhoto(selectedPhoto.id)}
+                      style={{ marginTop: '10px', backgroundColor: '#cc0000', color: 'white', padding: '6px 12px', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '0.9rem', width: '100%' }}
+                    >
+                      Eliminar Foto
+                    </button>
+                  )}
                 </div>
 
                 <div className="comments-section">

@@ -119,6 +119,24 @@ app.get('/api/photos', (req, res) => {
   res.json(formattedPhotos);
 });
 
+app.delete('/api/photos/:id', (req, res) => {
+  if (!req.user) return res.status(401).json({ error: 'Login required' });
+
+  const photo = db.prepare('SELECT * FROM photos WHERE id = ?').get(req.params.id);
+  if (!photo) return res.status(404).json({ error: 'Photo not found' });
+
+  if (photo.uploader_id !== req.user.id && req.user.role !== 'admin') {
+    return res.status(403).json({ error: 'Permission denied' });
+  }
+
+  try {
+    db.prepare("UPDATE photos SET status = 'deleted' WHERE id = ?").run(req.params.id);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to delete photo' });
+  }
+});
+
 // Comment Routes
 app.get('/api/photos/:id/comments', (req, res) => {
   const comments = db.prepare(`
