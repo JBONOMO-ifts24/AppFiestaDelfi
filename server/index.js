@@ -192,7 +192,9 @@ app.post('/api/photos/:id/rate', (req, res) => {
       VALUES (?, ?, ?)
       ON CONFLICT(photo_id, user_id) DO UPDATE SET score = excluded.score
     `).run(photoId, req.user.id, score);
-    res.json({ success: true });
+    
+    const result = db.prepare('SELECT AVG(score) as avg_score FROM ratings WHERE photo_id = ?').get(photoId);
+    res.json({ success: true, avg_score: result.avg_score || 0 });
   } catch (err) {
     res.status(500).json({ error: 'Error rating photo' });
   }

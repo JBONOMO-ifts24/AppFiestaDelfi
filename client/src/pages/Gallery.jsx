@@ -42,8 +42,11 @@ const Gallery = () => {
 
   const handleRate = async (photoId, score) => {
     try {
-      await axios.post(`${API_URL}/api/photos/${photoId}/rate`, { score }, { withCredentials: true });
-      fetchPhotos(); // Refresh to show new average
+      const res = await axios.post(`${API_URL}/api/photos/${photoId}/rate`, { score }, { withCredentials: true });
+      if (res.data.success && res.data.avg_score !== undefined) {
+         setSelectedPhoto(prev => prev ? { ...prev, avg_score: res.data.avg_score } : prev);
+      }
+      fetchPhotos(); // Refresh grid to show new average
     } catch (err) {
       alert('Debes iniciar sesión para calificar!');
     }
